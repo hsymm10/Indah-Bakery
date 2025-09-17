@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keranjang Belanja - Indah Bakery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFBF78;
+            --secondary: #FFEEA9;
+            --accent: #D2691E;
+            --dark: #8B4513;
+            --light: #FFFDF7;
+            --text: #5C3A21;
+            --shadow: 0 5px 15px rgba(139, 69, 19, 0.1);
+            --transition: all 0.3s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background-color: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 8%;
+            background: var(--primary);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .menu {
+            display: flex;
+            list-style: none;
+        }
+        .menu li {
+            margin: 0 0.8rem;
+            position: relative;
+        }
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        .menu a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: var(--transition);
+            position: relative;
+        }
+        .menu a:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .menu .active {
+            background: var(--secondary);
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--accent);
+            transition: var(--transition);
+        }
+        .menu a:hover::after {
+            width: 100%;
+        }
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            color: var(--dark);
+            font-size: 1.5rem;
+        }
+        .cart-hero {
+            background: linear-gradient(rgba(255, 191, 120, 0.8), rgba(255, 238, 169, 0.8)), 
+                        url('https://images.unsplash.com/photo-1603532648955-a039f2e364da?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 40vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 2rem;
+            position: relative;
+            margin-bottom: 3rem;
+        }
+        .cart-hero h1 {
+            font-size: 3.5rem;
+            color: var(--dark);
+            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+            margin-bottom: 1rem;
+            animation: fadeInDown 1s ease;
+        }
+        .cart-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            padding: 0 8% 4rem;
+            justify-content: center;
+        }
+        .cart-items {
+            flex: 2;
+            min-width: 300px;
+        }
+        .cart-item {
+            display: flex;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            align-items: center;
+        }
+        .cart-item img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            margin-left: 10px;
+        }
+        .cart-item-details {
+            padding: 1.5rem;
+            flex-grow: 1;
+        }
+        .cart-item-title {
+            font-size: 1.2rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        .cart-item-price {
+            font-size: 1.1rem;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            background: var(--primary);
+            color: var(--dark);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .quantity-input {
+            width: 50px;
+            text-align: center;
+            font-size: 1.1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 0.3rem;
+        }
+        .remove-item {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        .remove-item:hover {
+            color: #ff0000;
+        }
+        .cart-summary {
+            flex: 1;
+            min-width: 300px;
+            background: var(--secondary);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            height: fit-content;
+        }
+        .summary-title {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .summary-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .summary-total {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent);
+            border-top: 2px solid var(--primary);
+            padding-top: 1rem;
+        }
+        .customer-form {
+            margin: 1.5rem 0;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .customer-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .customer-form input,
+        .customer-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .checkout-btn {
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px auto 0;
+            transition: all 0.3s ease;
+            width: 100%;
+            justify-content: center;
+        }
+        .checkout-btn:hover {
+            background-color: #128C7E;
+            transform: translateY(-2px);
+        }
+        .empty-cart {
+            text-align: center;
+            padding: 4rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+        .empty-cart i {
+            font-size: 5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        .empty-cart h2 {
+            font-size: 2rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+        .empty-cart p {
+            margin-bottom: 2rem;
+            color: #777;
+        }
+        .continue-shopping {
+            background: var(--primary);
+            color: var(--dark);
+            text-decoration: none;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-block;
+        }
+        .continue-shopping:hover {
+            background: var(--accent);
+            color: white;
+        }
+        .footer {
+            background: var(--dark);
+            color: var(--secondary);
+            padding: 3rem 8% 2rem;
+            text-align: center;
+            position: relative;
+        }
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+        }
+        .footer p {
+            margin-bottom: 1.5rem;
+        }
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .social-icons a {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 238, 169, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        .social-icons a:hover {
+            background: var(--primary);
+            transform: translateY(-5px);
+        }
+        .social-icons img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+        }
+        iframe {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            border: none;
+            border-radius: 10px;
+            margin: 1rem auto;
+            box-shadow: var(--shadow);
+        }
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @media (max-width: 992px) {
+            .cart-container {
+                flex-direction: column;
+            }
+            .navbar {
+                padding: 1rem 5%;
+            }
+            .cart-hero h1 {
+                font-size: 2.8rem;
+            }
+        }
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+            .menu {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--primary);
+                flex-direction: column;
+                padding: 1rem 0;
+                clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+                transition: var(--transition);
+            }
+            .menu.active {
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            }
+            .menu li {
+                margin: 0.5rem 0;
+                text-align: center;
+            }
+            .cart-hero {
+                height: 30vh;
+            }
+            .cart-hero h1 {
+                font-size: 2.2rem;
+            }
+            .cart-item {
+                flex-direction: column;
+            }
+            .cart-item img {
+                width: 100%;
+                height: 200px;
+            }
+        }
+        @media (max-width: 480px) {
+            .cart-hero h1 {
+                font-size: 2rem;
+            }
+            .empty-cart {
+                padding: 2rem;
+            }
+            .empty-cart i {
+                font-size: 3rem;
+            }
+            .empty-cart h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">Indah Bakery</div>
+        <div class="hamburger">
+            <i class="fas fa-bars"></i>
+        </div>
+        <ul class="menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="products.html">Products</a></li>
+            
+            <li>
+                <a href="cart.html" class="active">Keranjang</a>
+                <span class="cart-count" id="cart-count">0</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="cart-hero">
+        <h1>Keranjang Belanja</h1>
+    </div>
+
+    <!-- Cart Content -->
+    <div class="cart-container">
+        <div class="cart-items" id="cart-items-container">
+            <!-- Item akan dimuat melalui JavaScript -->
+        </div>
+        <div class="cart-summary">
+            <h2 class="summary-title">Ringkasan Belanja</h2>
+            <div class="summary-details">
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span id="subtotal">Rp 0</span>
+                </div>
+                <div class="summary-row">
+                    <span>Diskon</span>
+                    <span id="discount">-Rp 0</span>
+                </div>
+                <div class="summary-row summary-total">
+                    <span>Total</span>
+                    <span id="total">Rp 0</span>
+                </div>
+            </div>
+            <div class="customer-form">
+                <h2>Data Pelanggan</h2>
+                <div>
+                    <label for="customer-name">Nama Lengkap</label>
+                    <input type="text" id="customer-name" placeholder="Masukkan nama lengkap">
+                </div>
+                <div>
+                    <label for="customer-phone">Nomor WhatsApp</label>
+                    <input type="tel" id="customer-phone" placeholder="Contoh: 08123456789">
+                </div>
+                <div>
+                    <label for="customer-address">Alamat Pengiriman</label>
+                    <textarea id="customer-address" rows="3" placeholder="Masukkan alamat lengkap"></textarea>
+                </div>
+            </div>
+            <button class="checkout-btn" id="whatsappCheckout">
+                <i class="fas fa-shopping-bag"></i> Lanjut ke Pembayaran
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+         <p>Sejak 2017 <strong>Indah Bakery</strong> ❤️ Lezatnya Bikin Nagih!</p>
+        <div class="social-icons">
+            <a href="https://wa.me/6283821927793?text=Halo%20Indah%20Bakery%2C%20saya%20ingin%20memesan%20produk%20Anda." target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="WhatsApp">
+            </a>
+            <a href="https://www.tiktok.com/@indahbakery" target="_blank">
+                 <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok" width="40" height="40">
+            </a>>
+        </div>
+        <iframe
+         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.37739681089!2d107.10012321476812!3d-6.211379395509097!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e699a9f2d4fbb79%3A0xf5e9c4802a94b30f!2sJl.%20Kongsi%20No.2%2C%20Jayasampurna%2C%20Serang%20Baru%2C%20Bekasi%2C%20Jawa%20Barat%2017530!5e0!3m2!1sid!2sid!4v1720428413000!5m2!1sid!2sid"
+         width="100%" height="350"
+         style="border:0; border-radius:8px;"
+         allowfullscreen="" loading="lazy"
+         referrerpolicy="no-referrer-when-downgrade"
+         title="Indah Bakery – Peta Lokasi"
+         ></iframe>
+
+    </div>
+
+    <script>
+        // Format harga ke Rupiah
+        function formatRupiah(amount) {
+            return 'Rp ' + amount.toLocaleString('id-ID');
+        }
+
+        // Ambil data keranjang dari localStorage
+        function getCart() {
+            return JSON.parse(localStorage.getItem('cart')) || [];
+        }
+
+        // Simpan data keranjang ke localStorage
+        function saveCart(cart) {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        // Render item keranjang
+        function renderCartItems() {
+            const cart = getCart();
+            const cartItemsContainer = document.getElementById('cart-items-container');
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h2>Keranjang Belanja Kosong</h2>
+                        <p>Silakan tambahkan produk ke keranjang belanja Anda</p>
+                        <a href="products.html" class="continue-shopping">Lanjutkan Belanja</a>
+                    </div>
+                `;
+                updateCartSummary();
+                updateCartCount();
+                return;
+            }
+
+            cartItemsContainer.innerHTML = '';
+
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.classList.add('cart-item');
+                cartItem.dataset.id = item.id;
+
+                cartItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <div class="cart-item-details">
+                        <h3 class="cart-item-title">${item.name}</h3>
+                        <p class="cart-item-price">${item.price}</p>
+                        <div class="cart-item-quantity">
+                            <button class="quantity-btn minus">-</button>
+                            <input type="number" class="quantity-input" value="${item.quantity}" min="1">
+                            <button class="quantity-btn plus">+</button>
+                        </div>
+                        <button class="remove-item"><i class="fas fa-trash"></i> Hapus</button>
+                    </div>
+                `;
+
+                cartItemsContainer.appendChild(cartItem);
+            });
+
+            updateCartSummary();
+            attachCartItemEvents();
+            updateCartCount();
+        }
+
+        // Update ringkasan belanja
+        function updateCartSummary() {
+            const cart = getCart();
+            let subtotal = 0;
+
+            cart.forEach(item => {
+                const price = parseInt(item.price.replace(/[^0-9]/g, ''));
+                subtotal += price * item.quantity;
+            });
+
+            const discount = subtotal > 500000 ? 50000 : 0;
+            const total = subtotal - discount;
+
+            document.getElementById('subtotal').textContent = formatRupiah(subtotal);
+            document.getElementById('discount').textContent = discount > 0 ? `-${formatRupiah(discount)}` : formatRupiah(0);
+            document.getElementById('total').textContent = formatRupiah(total);
+        }
+
+        // Update jumlah item di keranjang
+        function updateCartCount() {
+            const cart = getCart();
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-count').textContent = totalItems;
+        }
+
+        // Tambahkan event ke item keranjang
+        function attachCartItemEvents() {
+            // Tombol minus
+            document.querySelectorAll('.quantity-btn.minus').forEach(button => {
+                button.addEventListener('click', function() {
+                    const cartItem = this.closest('.cart-item');
+                    const itemId = cartItem.dataset.id;
+                    const input = cartItem.querySelector('.quantity-input');
+                    let value = parseInt(input.value);
+
+                    if (value > 1) {
+                        input.value = value - 1;
+                        updateCartItemQuantity(itemId, value - 1);
+                    }
+                });
+            });
+
+            // Tombol plus
+            document.querySelectorAll('.quantity-btn.plus').forEach(button => {
+                button.addEventListener('click', function() {
+                    const cartItem = this.closest('.cart-item');
+                    const itemId = cartItem.dataset.id;
+                    const input = cartItem.querySelector('.quantity-input');
+                    let value = parseInt(input.value);
+                    input.value = value + 1;
+                    updateCartItemQuantity(itemId, value + 1);
+                });
+            });
+
+            // Input jumlah
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    if (this.value < 1) this.value = 1;
+                    const cartItem = this.closest('.cart-item');
+                    const itemId = cartItem.dataset.id;
+                    updateCartItemQuantity(itemId, parseInt(this.value));
+                });
+            });
+
+            // Tombol hapus
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', function() {
+                    const cartItem = this.closest('.cart-item');
+                    const itemId = cartItem.dataset.id;
+                    removeCartItem(itemId);
+                });
+            });
+        }
+
+        // Update jumlah item di keranjang
+        function updateCartItemQuantity(itemId, newQuantity) {
+            let cart = getCart();
+            const itemIndex = cart.findIndex(item => item.id === itemId);
+
+            if (itemIndex !== -1) {
+                cart[itemIndex].quantity = newQuantity;
+                saveCart(cart);
+                updateCartSummary();
+                updateCartCount();
+            }
+        }
+
+        // Fungsi untuk menghapus item dari keranjang
+        function removeCartItem(itemId) {
+            let cart = getCart();
+            cart = cart.filter(item => item.id !== itemId);
+            saveCart(cart);
+            renderCartItems();
+        }
+
+        // Hamburger menu toggle
+        document.querySelector('.hamburger').addEventListener('click', function() {
+            document.querySelector('.menu').classList.toggle('active');
+        });
+
+        // Tombol checkout WhatsApp
+        document.getElementById('whatsappCheckout').addEventListener('click', function() {
+            const cart = getCart();
+            if (cart.length === 0) {
+                alert('Keranjang belanja Anda kosong');
+                return;
+            }
+
+            // Ambil data pelanggan
+            const customerName = document.getElementById('customer-name').value.trim();
+            const customerPhone = document.getElementById('customer-phone').value.trim();
+            const customerAddress = document.getElementById('customer-address').value.trim();
+
+            if (!customerName || !customerPhone || !customerAddress) {
+                alert('Silakan lengkapi data pelanggan sebelum melanjutkan pembayaran.');
+                return;
+            }
+
+            // Kumpulkan data pesanan
+            let orderItems = [];
+            let subtotal = 0;
+            cart.forEach(function(item) {
+                const name = item.name;
+                const price = parseInt(item.price.replace(/[^0-9]/g, ''));
+                const quantity = item.quantity;
+                const itemTotal = price * quantity;
+                orderItems.push(`${name} (${quantity}x) - ${item.price}`);
+                subtotal += itemTotal;
+            });
+
+            const discount = subtotal > 500000 ? 50000 : 0;
+            const total = subtotal - discount;
+
+            let message = `Halo Indah Bakery, saya ingin memesan:\n\n`;
+            message += `*Daftar Pesanan:*\n${orderItems.join('\n')}\n\n`;
+            message += `*Rincian Harga:*\n`;
+            message += `Subtotal: Rp ${subtotal.toLocaleString('id-ID')}\n`;
+            message += `Diskon: Rp ${discount.toLocaleString('id-ID')}\n`;
+            message += `*Total: Rp ${total.toLocaleString('id-ID')}*\n\n`;
+            message += `*Data Diri:*\n`;
+            message += `Nama: ${customerName}\n`;
+            message += `Nomor WhatsApp: ${customerPhone}\n`;
+            message += `Alamat: ${customerAddress}\n\n`;
+            message += `Apakah pesanan ini bisa diproses?`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappNumber = '6283821927793'; // tanpa +
+            window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
+
+            // Kosongkan keranjang setelah checkout
+            localStorage.removeItem('cart');
+            setTimeout(() => {
+                renderCartItems();
+                updateCartCount();
+            }, 500);
+        });
+
+        // Inisialisasi saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCartItems();
+        });
+    </script>
+</body>
+</html>

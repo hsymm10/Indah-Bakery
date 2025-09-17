@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://indah-bakery.vercel.app/sitemap.xml

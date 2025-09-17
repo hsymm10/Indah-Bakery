@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indah Bakery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Salin seluruh CSS dari products.html di sini */
+        :root {
+            --primary: #FFBF78;
+            --secondary: #FFEEA9;
+            --accent: #D2691E;
+            --dark: #8B4513;
+            --light: #FFFDF7;
+            --text: #5C3A21;
+            --shadow: 0 5px 15px rgba(139, 69, 19, 0.1);
+            --transition: all 0.3s ease;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--light); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 8%; background: var(--primary); box-shadow: var(--shadow); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.8rem; font-weight: 700; color: var(--dark); letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .menu { display: flex; list-style: none; }
+        .menu li { margin: 0 0.8rem; }
+        .menu a { text-decoration: none; color: var(--dark); font-weight: 500; padding: 0.5rem 1rem; border-radius: 25px; transition: var(--transition); position: relative; }
+        .menu a:hover:not(.active) { background: rgba(255, 255, 255, 0.3); }
+        .menu .active { background: var(--secondary); color: var(--accent); font-weight: 600; }
+        .menu a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 3px; background: var(--accent); transition: var(--transition); }
+        .menu a:hover::after { width: 100%; }
+        .hamburger { display: none; cursor: pointer; color: var(--dark); font-size: 1.5rem; }
+        .product-hero { background: linear-gradient(rgba(255, 191, 120, 0.8), rgba(255, 238, 169, 0.8)), url('https://images.unsplash.com/photo-1555507036-ab1f4038808a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1926&q=80'); background-size: cover; background-position: center; height: 50vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 2rem; position: relative; margin-bottom: 3rem; }
+        .product-hero h1 { font-size: 3.5rem; color: var(--dark); text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8); margin-bottom: 1rem; animation: fadeInDown 1s ease; }
+        .product-hero p { font-size: 1.2rem; max-width: 600px; color: var(--dark); animation: fadeInUp 1s ease; }
+        .footer { background: var(--dark); color: var(--secondary); padding: 3rem 8% 2rem; text-align: center; position: relative; }
+        .footer::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 10px; background: linear-gradient(to right, var(--primary), var(--secondary)); }
+        .footer p { margin-bottom: 1.5rem; }
+        .social-icons { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 2rem; }
+        .social-icons a { display: inline-block; width: 50px; height: 50px; border-radius: 50%; background: rgba(255, 238, 169, 0.2); display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+        .social-icons a:hover { background: var(--primary); transform: translateY(-5px); }
+        .social-icons img { width: 30px; height: 30px; object-fit: contain; }
+        iframe { width: 100%; max-width: 600px; height: 300px; border: none; border-radius: 10px; margin: 1rem auto; box-shadow: var(--shadow); }
+        @media (max-width: 992px) { .navbar { padding: 1rem 5%; } .product-hero h1 { font-size: 2.8rem; } }
+        @media (max-width: 768px) { .hamburger { display: block; } .menu { position: absolute; top: 100%; left: 0; width: 100%; background: var(--primary); flex-direction: column; padding: 1rem 0; clip-path: polygon(0 0, 100% 0, 100% 0, 0 0); transition: var(--transition); } .menu.active { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); } .menu li { margin: 0.5rem 0; text-align: center; } .product-hero { height: 40vh; } .product-hero h1 { font-size: 2.2rem; } }
+        @media (max-width: 480px) { .product-hero h1 { font-size: 2rem; } }
+
+        /* Animasi fadeIn untuk elemen utama */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px);}
+            to   { opacity: 1; transform: translateY(0);}
+        }
+        .product-hero, .contact-container {
+            animation: fadeIn 1s ease;
+        }
+
+        /* Animasi pada tombol kirim pesan */
+        .contact-form button {
+            transition: background 0.3s, color 0.3s, transform 0.3s;
+        }
+        .contact-form button:hover {
+            transform: scale(1.05) rotate(-2deg);
+        }
+
+        /* Animasi icon sosial media di footer */
+        .social-icons a {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .social-icons a:hover {
+            transform: scale(1.15) rotate(8deg);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">Indah Bakery</div>
+        <div class="hamburger">
+            <i class="fas fa-bars"></i>
+        </div>
+        <ul class="menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html" class="active">About</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="cart.html">Keranjang</a></li>
+        </ul>
+    </div> 
+
+    <!-- Hero Section -->
+    <div class="product-hero">
+        <h1>Tentang Kami</h1>
+        <p>Indah Bakery berdiri sejak 2017, menghadirkan kue-kue premium dan tradisional dengan bahan terbaik dan rasa otentik.</p>
+    </div>
+
+    <!-- Konten About -->
+    <div style="padding: 0 8%; max-width: 900px; margin: 0 auto 4rem;">
+        <h2 style="color: var(--accent); margin-bottom: 1rem;">Visi & Misi</h2>
+        <p style="margin-bottom: 2rem;">
+            Kami berkomitmen menghadirkan kue lezat, sehat, dan inovatif untuk setiap momen spesial Anda.
+        </p>
+        <h2 style="color: var(--accent); margin-bottom: 1rem;">Tim Kami</h2>
+        <p>
+            Dikelola oleh tim profesional dan chef berpengalaman, kami selalu menjaga kualitas dan pelayanan terbaik.
+        </p>
+    </div>
+
+    <!-- Footer -->
+      <div class="footer">
+     <p>Sejak 2017 <strong>Indah Bakery</strong> ❤️ Lezatnya Bikin Nagih!</p>
+    <div class="social-icons">
+        <a href="https://wa.me/6283821927793?text=Halo%20Indah%20Bakery%2C%20saya%20ingin%20memesan%20produk%20Anda." target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="WhatsApp">
+        </a>
+        <a href="https://www.tiktok.com/@indahbakery" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok" width="40" height="40">
+        </a>
+      </div>
+        <iframe
+         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.37739681089!2d107.10012321476812!3d-6.211379395509097!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e699a9f2d4fbb79%3A0xf5e9c4802a94b30f!2sJl.%20Kongsi%20No.2%2C%20Jayasampurna%2C%20Serang%20Baru%2C%20Bekasi%2C%20Jawa%20Barat%2017530!5e0!3m2!1sid!2sid!4v1720428413000!5m2!1sid!2sid"
+         width="100%" height="350"
+         style="border:0; border-radius:8px;"
+         allowfullscreen="" loading="lazy"
+         referrerpolicy="no-referrer-when-downgrade"
+         title="Indah Bakery – Peta Lokasi"
+      ></iframe>
+
+    </div>
+    <script>
+        // Hamburger menu toggle
+        document.querySelector('.hamburger').addEventListener('click', function() {
+            document.querySelector('.menu').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
